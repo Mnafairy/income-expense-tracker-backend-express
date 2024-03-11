@@ -39,9 +39,9 @@ app.get("/users", async (req, res) => {
 app.post("/signup", async (req, res) => {
   const newUser = req.body;
   const client = await pool.connect();
-  const query = `INSERT INTO users (id,name, age, email) VALUES ('${uuidv4()}','${
-    newUser.name
-  }','${newUser.age}','${newUser.email}');`;
+  const query = `INSERT INTO users (id,email,name,password) VALUES ('${uuidv4()}','${
+    newUser.email
+  }','${newUser.name}','${newUser.password}');`;
   try {
     client.query(query);
   } catch (e) {
