@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 app.use(cors());
@@ -37,9 +38,10 @@ app.get("/users", async (req, res) => {
 
 app.post("/signup", async (req, res) => {
   const newUser = req.body;
-  console.log(newUser);
   const client = await pool.connect();
-  const query = `INSERT INTO users (name, age, email) VALUES ('${newUser.name}','${newUser.age}','${newUser.email}');`;
+  const query = `INSERT INTO users (id,name, age, email) VALUES ('${uuidv4()}','${
+    newUser.name
+  }','${newUser.age}','${newUser.email}');`;
   try {
     client.query(query);
   } catch (e) {
@@ -48,7 +50,7 @@ app.post("/signup", async (req, res) => {
     client.release();
   }
 
-  res.status(200).send({ message: "User Added successfully" });
+  res.status(201).send({ message: "User Added" });
 });
 
 // app.delete("/delete", async (req, res) => {
@@ -79,19 +81,31 @@ app.post("/signup", async (req, res) => {
 //   res.status(200).send({ message: "success" });
 // });
 
-app.get("/init", async (req, res) => {
+app.get("/create-table", async (req, res) => {
+  const client = await pool.connect();
+  const q =
+    "CREATE TABLE users (id VARCHAR(255),email VARCHAR(255), name VARCHAR(255),password  VARCHAR(255)";
+  try {
+    client.query(q);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    client.release();
+  }
+  res.status(200).send({ message: "created table" });
+});
+app.get("/delete-table", async (req, res) => {
   const client = await pool.connect();
   try {
-    client.query("CREATE TABLE test (name VARCHAR(255), age INT)");
+    client.query("DROP TABLE users");
   } catch (error) {
     console.log(error);
   } finally {
     client.release();
   }
-
-  res.status(200).send({ message: "success" });
+  res.status(200).send({ message: "deleted table" });
 });
 
-app.listen(4000, () => {
-  console.log("Server is running on port 4000");
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
 });
