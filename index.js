@@ -1,111 +1,35 @@
+require("dotenv").config();
 const { Pool } = require("pg");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-require("dotenv").config();
-const { v4: uuidv4 } = require("uuid");
-
 const app = express();
+const { signup } = require("./route/signup");
+const { getUsers } = require("./route/get-users");
+const { createTable } = require("./route/create-table");
+
+const router = express.Router();
+
 app.use(cors());
 app.use(bodyParser.json());
 
-const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, PGPORT } = process.env;
+router.post("/signup", signup);
+router.get("/get-users", getUsers);
+router.get("/create-table", createTable);
+app.use(router);
 
-const pgConif = {
-  host: PGHOST,
-  database: PGDATABASE,
-  username: PGUSER,
-  password: PGPASSWORD,
-  port: PGPORT,
-  ssl: {
-    require: true,
-  },
-};
-
-const pool = new Pool(pgConif);
-
-app.get("/users", async (req, res) => {
-  const client = await pool.connect();
-  try {
-    client.query("SELECT * FROM users");
-  } catch (error) {
-    console.log(error);
-  } finally {
-    client.release();
-  }
-  res.status(200).send({ message: "success" });
-});
-
-app.post("/signup", async (req, res) => {
-  const newUser = req.body;
-  const client = await pool.connect();
-  const query = `INSERT INTO users (id,email,name,password) VALUES ('${uuidv4()}','${
-    newUser.email
-  }','${newUser.name}','${newUser.password}');`;
-  try {
-    client.query(query);
-  } catch (e) {
-    console.log(e);
-  } finally {
-    client.release();
-  }
-
-  res.status(201).send({ message: "User Added" });
-});
-
-// app.delete("/delete", async (req, res) => {
+// app.get("/delete-table", async (req, res) => {
 //   const client = await pool.connect();
 //   try {
-//     client.query("DROP TABLE test");
+//     client.query("DROP TABLE users");
 //   } catch (error) {
 //     console.log(error);
 //   } finally {
 //     client.release();
 //   }
-
-//   res.status(200).send({ message: "success" });
+//   res.status(200).send({ message: "deleted table" });
 // });
 
-// app.patch("/update-user", async (req, res) => {
-//   const user = req.body;
-//   const client = await pool.connect();
-//   try {
-//     client.query(
-//       `UPDATE users SET name = '${user.name}', age= '${user.age}' WHERE email ='Khuslen@gmail.com' `
-//     );
-//   } catch (error) {
-//     console.log(error);
-//   } finally {
-//     client.release;
-//   }
-//   res.status(200).send({ message: "success" });
-// });
-
-app.get("/create-table", async (req, res) => {
-  const client = await pool.connect();
-  const q =
-    "CREATE TABLE users (id VARCHAR(255),email VARCHAR(255), name VARCHAR(255),password  VARCHAR(255)";
-  try {
-    client.query(q);
-  } catch (err) {
-    console.log(err);
-  } finally {
-    client.release();
-  }
-  res.status(200).send({ message: "created table" });
-});
-app.get("/delete-table", async (req, res) => {
-  const client = await pool.connect();
-  try {
-    client.query("DROP TABLE users");
-  } catch (error) {
-    console.log(error);
-  } finally {
-    client.release();
-  }
-  res.status(200).send({ message: "deleted table" });
-});
-
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+app.listen(4000, () => {
+  console.log("Server is running on port 4000");
 });
