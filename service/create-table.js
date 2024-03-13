@@ -13,15 +13,16 @@ const pool = new Pool({
   },
 });
 
-exports.getUsers = async (req, res) => {
+exports.createTable = async (req, res) => {
   const client = await pool.connect();
   try {
-    client.query("SELECT * FROM users");
-    res.send({ users });
-  } catch (error) {
-    console.log(error);
+    await client.query(
+      `CREATE TABLE users (id VARCHAR(255),email VARCHAR(255), name VARCHAR(255),password  VARCHAR(255)`
+    );
+  } catch (err) {
+    console.log(err);
   } finally {
     client.release();
   }
-  // res.status(200).send({ message: "success" });
+  res.status(200).send({ message: "created table" });
 };

@@ -12,11 +12,12 @@ const pool = new Pool({
     require: true,
   },
 });
-exports.createTable = async (req, res) => {
+exports.currencyUpdate = async (req, res) => {
+  const newUser = req.body;
   const client = await pool.connect();
   try {
     await client.query(
-      `CREATE TABLE users (id VARCHAR(255),email VARCHAR(255), name VARCHAR(255),password  VARCHAR(255)`
+      `UPDATE users SET currency_type=${newUser.currency} WHERE id=${newUser.id}`
     );
   } catch (err) {
     console.log(err);
