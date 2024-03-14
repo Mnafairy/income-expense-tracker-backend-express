@@ -31,4 +31,5 @@ userRouter.post("/login", async (req, res) => {
   const result = await login(userData);
   res.json(result);
 });
+
 module.exports = userRouter;
