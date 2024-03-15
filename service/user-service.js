@@ -62,7 +62,7 @@ const getUsers = async () => {
 const currencyUpdate = async (userInfo) => {
   const client = await pool.connect();
   let response;
-  const query = `UPDATE users SET currency_type=${userInfo.currency} WHERE id=${userInfo.id}`;
+  const query = `UPDATE users SET currency_type='${userInfo.currency}' WHERE id='${userInfo.id}'`;
   try {
     response = await client.query(query);
   } catch (error) {

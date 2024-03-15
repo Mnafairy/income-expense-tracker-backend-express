@@ -12,21 +12,25 @@ const pool = new Pool({
     require: true,
   },
 });
-const addCategory = async (recordInfo) => {
+const addRecord = async (recordInfo) => {
   const client = await pool.connect();
   let response;
-  const query = `INSERT INTO category (id,name,description) VALUES ($1,$2,$3)`;
-  const values = [recordInfo.id, recordInfo.name, recordInfo.description];
-
+  const query = `INSERT INTO record (id,name,record_type,description,amount) VALUES ($1,$2,$3,$4,$5)`;
+  const values = [
+    recordInfo.id,
+    recordInfo.name,
+    recordInfo.record_type,
+    recordInfo.description,
+    recordInfo.amount,
+  ];
   try {
     response = await client.query(query, values);
   } catch (error) {
     throw new Error(error ? error.message : "Error");
   } finally {
     client.release();
-    console.log("category added");
+    console.log("record added");
   }
   return response.rows;
 };
-
-module.exports = { addCategory };
+module.exports = { addRecord };

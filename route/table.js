@@ -1,16 +1,31 @@
-const userRouter = require("express").Router(); // shine router zohioj bgaa
+const tableRouter = require("express").Router(); // shine router zohioj bgaa
 const {
-  addUser,
-  deleteUser,
-  getUsers,
-  currencyUpdate,
-  login,
-} = require("../service/user-service");
+  createUsersTable,
+  addColumn,
+  deleteTable,
+  createTransTable,
+  createCategoryTable,
+} = require("../service/table-service");
 
-userRouter.post("/signup", async (req, res) => {
-  const newUserData = req.body;
-  const result = await addUser(newUserData);
+tableRouter.post("/createUsersTable", async (req, res) => {
+  const result = await createUsersTable();
+  res.json(result);
+});
+tableRouter.post("/addColumn", async (req, res) => {
+  const result = await addColumn();
+  res.json(result);
+});
+tableRouter.delete("/deleteTable", async (req, res) => {
+  const result = await deleteTable();
+  res.json(result);
+});
+tableRouter.post("/createTransTable", async (req, res) => {
+  const result = await createTransTable();
+  res.json(result);
+});
+tableRouter.post("/createCategoryTable", async (req, res) => {
+  const result = await createCategoryTable();
   res.json(result);
 });
 
-module.exports = userRouter;
+module.exports = tableRouter;
